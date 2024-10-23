@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:evika/data/models/event.dart';
 import 'package:evika/data/models/login_user.dart';
 import 'package:evika/data/repositories/repository.dart';
+import 'package:flutter/material.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
@@ -9,10 +10,11 @@ part 'home_state.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Repository repo;
   int nextPage;
-  late int totalPages;
+  int totalPages;
 
   HomeBloc(this.repo)
       : nextPage = 1,
+        totalPages = 0,
         super(HomeState.empty()) {
     on<HomeInitialEvent>(_handleInitialEvent);
     on<HomeLikeEvent>(_handleLikeEvent);
@@ -28,7 +30,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       totalPages = r.$2;
       emit(state.copyWith(events: r.$1));
     } catch (e) {
-      emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
+      // emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
+      debugPrint("Cached Response");
+      final events = repo.getEventsCached();
+      emit(state.copyWith(events: events));
     }
   }
 

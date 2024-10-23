@@ -77,16 +77,13 @@ class _HomePageState extends State<HomePage> {
           BlocConsumer<HomeBloc, HomeState>(
             listener: (context, state) {
               if (state is HomeNoMoreEventsState) {
-                setState(() {
-                  hasNextEvents = false;
-                  isLoading = false;
-                });
+                setState(() => hasNextEvents = false);
               } else if (state is HomeFailureState) {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.errorMsg)));
-              } else {
-                setState(() => isLoading = false);
               }
+              // Set loading to false when state changes
+              setState(() => isLoading = false);
             },
             builder: (context, state) {
               if (state.events.isEmpty) return CircularProgressIndicator();

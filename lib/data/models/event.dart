@@ -2,25 +2,46 @@
 import 'dart:convert';
 
 import 'user.dart';
+import 'package:hive/hive.dart';
 
+part 'event.g.dart';
+
+@HiveType(typeId: 1)
 class Event {
+  @HiveField(0)
   User user;
+  @HiveField(1)
   String description;
+  @HiveField(2)
   String title;
+  @HiveField(3)
   List<String> imageUrls;
+  @HiveField(4)
   List<String> likedUsersId;
+  @HiveField(5)
   List<String> comments;
+  @HiveField(6)
   List<String> eventCategory;
+  @HiveField(7)
   DateTime eventStartAt;
+  @HiveField(8)
   DateTime eventEndAt;
+  @HiveField(9)
   bool registrationRequired;
+  @HiveField(10)
   List<String> keywords;
+  @HiveField(11)
   List<String> hashTags;
+  @HiveField(12)
   List<String> registration;
+  @HiveField(13)
   int likes;
 
+  @HiveField(14)
   bool isLiked;
+  @HiveField(15)
   String myComment;
+  @HiveField(16)
   bool isSaved;
 
   Event({
