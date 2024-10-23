@@ -21,16 +21,21 @@ class EventCard extends StatelessWidget {
       child: Column(
         children: [
           _topBar(),
-          Image.network(
-            event.imageUrls[0],
-            errorBuilder: (context, error, stackTrace) => SizedBox(
-              height: 250,
-              child: Icon(
-                Icons.image_not_supported_outlined,
-                size: 100,
-              ),
-            ),
-          ),
+          event.imageUrls.isEmpty
+              ? SizedBox(
+                  height: 250,
+                  child: Icon(Icons.image_not_supported_outlined, size: 100),
+                )
+              : Image.network(
+                  event.imageUrls[0],
+                  errorBuilder: (context, error, stackTrace) => SizedBox(
+                    height: 250,
+                    child: Icon(
+                      Icons.image_not_supported_outlined,
+                      size: 100,
+                    ),
+                  ),
+                ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             child: Text(event.description, maxLines: 2, overflow: TextOverflow.ellipsis),
@@ -49,7 +54,8 @@ class EventCard extends StatelessWidget {
         Row(
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage(event.imageUrls[0]),
+              backgroundImage:
+                  event.imageUrls.isEmpty ? null : NetworkImage(event.imageUrls[0]),
               backgroundColor: Colors.grey,
             ),
             SizedBox(width: 8),

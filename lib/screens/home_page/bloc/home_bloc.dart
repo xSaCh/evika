@@ -69,6 +69,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         return;
       }
       var newEvents = await repo.getEvents(page: nextPage);
+      // await Future.delayed(Duration(seconds: 3));
       // Assuming Total pages might change during fetching next pages
       totalPages = newEvents.$2;
       nextPage++;

@@ -4,14 +4,46 @@ import 'package:evika/widgets/event_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
 
   static Widget builder(BuildContext context) {
     return BlocProvider(
       create: (context) => HomeBloc(context.read<Repository>())..add(HomeInitialEvent()),
       child: HomePage(),
     );
+  }
+}
+
+class _HomePageState extends State<HomePage> {
+  final _scrollCnt = ScrollController(keepScrollOffset: true);
+  bool hasNextEvents = true;
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollCnt.addListener(_loadMore);
+  }
+
+  @override
+  void dispose() {
+    _scrollCnt.dispose();
+    super.dispose();
+  }
+
+  void _loadMore() {
+    // Load more events when scroll to the bottom
+    if (hasNextEvents &&
+        !isLoading &&
+        _scrollCnt.position.pixels == _scrollCnt.position.maxScrollExtent) {
+      BlocProvider.of<HomeBloc>(context).add(HomeNextEvents());
+      setState(() => isLoading = true);
+      debugPrint("Loading...");
+    }
   }
 
   @override
@@ -42,12 +74,26 @@ class HomePage extends StatelessWidget {
               )
             ]),
           ),
-          BlocBuilder<HomeBloc, HomeState>(
+          BlocConsumer<HomeBloc, HomeState>(
+            listener: (context, state) {
+              if (state is HomeNoMoreEventsState) {
+                setState(() {
+                  hasNextEvents = false;
+                  isLoading = false;
+                });
+              } else if (state is HomeFailureState) {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(state.errorMsg)));
+              } else {
+                setState(() => isLoading = false);
+              }
+            },
             builder: (context, state) {
               if (state.events.isEmpty) return CircularProgressIndicator();
               final myBloc = BlocProvider.of<HomeBloc>(context);
               return Expanded(
                   child: ListView.builder(
+                controller: _scrollCnt,
                 itemCount: state.events.length,
                 itemBuilder: (context, i) => Padding(
                   padding: const EdgeInsets.only(top: 8.0),
@@ -60,7 +106,13 @@ class HomePage extends StatelessWidget {
                 ),
               ));
             },
-          )
+          ),
+          if (isLoading)
+            Container(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                color: Colors.white,
+                width: double.infinity,
+                child: Center(child: const CircularProgressIndicator())),
         ],
       ),
     );
