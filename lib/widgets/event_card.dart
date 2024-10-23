@@ -21,7 +21,16 @@ class EventCard extends StatelessWidget {
       child: Column(
         children: [
           _topBar(),
-          Image.network(event.imageUrls[0]),
+          Image.network(
+            event.imageUrls[0],
+            errorBuilder: (context, error, stackTrace) => SizedBox(
+              height: 250,
+              child: Icon(
+                Icons.image_not_supported_outlined,
+                size: 100,
+              ),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             child: Text(event.description, maxLines: 2, overflow: TextOverflow.ellipsis),
@@ -49,7 +58,12 @@ class EventCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Text("Arneo Paris", style: TextStyle(fontSize: 16)),
-                Text(event.title, style: TextStyle(fontSize: 16)),
+                Text(
+                  event.title,
+                  style: TextStyle(fontSize: 16),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 Text("${event.user.firstName} ${event.user.lastName}",
                     style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
               ],
@@ -70,7 +84,7 @@ class EventCard extends StatelessWidget {
           TextButton.icon(
             onPressed: onLikeTap,
             label: Text("69 Like"),
-            icon: Icon(Icons.thumb_up),
+            icon: Icon(event.isLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined),
           ),
           TextButton.icon(
             onPressed: onCommentTap,
