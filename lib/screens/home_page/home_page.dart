@@ -10,10 +10,10 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 
-  static Widget builder(BuildContext context) {
+  static Widget builder(BuildContext context, {Key? key}) {
     return BlocProvider(
       create: (context) => HomeBloc(context.read<Repository>())..add(HomeInitialEvent()),
-      child: HomePage(),
+      child: HomePage(key: key),
     );
   }
 }
