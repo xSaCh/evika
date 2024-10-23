@@ -1,5 +1,7 @@
+import 'package:evika/data/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:evika/data/models/event.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
@@ -80,19 +82,30 @@ class EventCard extends StatelessWidget {
         children: [
           TextButton.icon(
             onPressed: onLikeTap,
-            label: Text("${event.likedUsersId.length + (event.isLiked ? 1 : 0)} Like"),
-            icon: Icon(event.isLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined),
+            label: Text(
+              "${event.likedUsersId.length + (event.isLiked ? 1 : 0)} Like",
+              style: TextStyle(color: event.isLiked ? mainColor : greyTextColor),
+            ),
+            icon: SvgPicture.asset('assets/like.svg',
+                colorFilter:
+                    event.isLiked ? ColorFilter.mode(mainColor, BlendMode.srcIn) : null),
           ),
           TextButton.icon(
             onPressed: onCommentTap,
             label: Text(
-                "${event.comments.length + (event.myComment.isNotEmpty ? 1 : 0)} Comment"),
-            icon: Icon(Icons.comment_sharp),
+              "${event.comments.length + (event.myComment.isNotEmpty ? 1 : 0)} Comment",
+              style: TextStyle(
+                  color: event.myComment.isNotEmpty ? mainColor : greyTextColor),
+            ),
+            icon: SvgPicture.asset('assets/comment.svg',
+                colorFilter: event.myComment.isNotEmpty
+                    ? ColorFilter.mode(mainColor, BlendMode.srcIn)
+                    : null),
           ),
           TextButton.icon(
             onPressed: onSaveTap,
-            label: Text("Share"),
-            icon: Icon(Icons.share),
+            label: Text("Share", style: TextStyle(color: greyTextColor)),
+            icon: SvgPicture.asset('assets/share.svg'),
           ),
         ],
       ),

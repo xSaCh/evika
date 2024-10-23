@@ -1,8 +1,10 @@
+import 'package:evika/data/constants.dart';
 import 'package:evika/data/repositories/repository.dart';
 import 'package:evika/screens/home_page/bloc/home_bloc.dart';
 import 'package:evika/widgets/event_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -69,8 +71,13 @@ class _HomePageState extends State<HomePage> {
               SizedBox(width: 16),
               IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.settings_input_component_rounded,
-                    size: 30, color: Color(0xFF0A66C2)),
+                icon: SvgPicture.asset('assets/setting.svg',
+                    colorFilter: ColorFilter.mode(
+                      mainColor,
+                      BlendMode.srcIn,
+                    )),
+                // icon: Icon(Icons.settings_input_component_rounded,
+                //     size: 30, color: mainColor),
               )
             ]),
           ),

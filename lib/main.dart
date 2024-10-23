@@ -1,3 +1,4 @@
+import 'package:evika/data/constants.dart';
 import 'package:evika/data/models/event_interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,6 +37,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: mainColor),
+        useMaterial3: true,
+      ),
       title: 'Evika',
       home: BaseScreen(),
     );
