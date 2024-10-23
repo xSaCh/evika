@@ -1,5 +1,6 @@
 import 'package:evika/data/constants.dart';
 import 'package:evika/data/models/event_interaction.dart';
+import 'package:evika/screens/base_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -38,10 +39,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: mainColor),
+        navigationBarTheme: NavigationBarThemeData(
+          labelTextStyle: WidgetStateProperty.all(TextStyle(color: Colors.white)),
+        ),
         useMaterial3: true,
       ),
       title: 'Evika',
-      home: LoginScreen.builder(context),
+      // home: LoginScreen.builder(context),
+      home: BaseScreen(),
     );
   }
 }
