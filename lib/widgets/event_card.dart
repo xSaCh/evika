@@ -5,13 +5,13 @@ class EventCard extends StatelessWidget {
   final Event event;
   final VoidCallback? onLikeTap;
   final VoidCallback? onCommentTap;
-  final VoidCallback? onShareTap;
+  final VoidCallback? onSaveTap;
   const EventCard({
     super.key,
     required this.event,
     this.onLikeTap,
     this.onCommentTap,
-    this.onShareTap,
+    this.onSaveTap,
   });
 
   @override
@@ -30,10 +30,7 @@ class EventCard extends StatelessWidget {
                   event.imageUrls[0],
                   errorBuilder: (context, error, stackTrace) => SizedBox(
                     height: 250,
-                    child: Icon(
-                      Icons.image_not_supported_outlined,
-                      size: 100,
-                    ),
+                    child: Icon(Icons.image_not_supported_outlined, size: 100),
                   ),
                 ),
           Padding(
@@ -48,36 +45,30 @@ class EventCard extends StatelessWidget {
   }
 
   Widget _topBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Row(
-          children: [
-            CircleAvatar(
-              backgroundImage:
-                  event.imageUrls.isEmpty ? null : NetworkImage(event.imageUrls[0]),
-              backgroundColor: Colors.grey,
-            ),
-            SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Text("Arneo Paris", style: TextStyle(fontSize: 16)),
-                Text(
-                  event.title,
-                  style: TextStyle(fontSize: 16),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+      leading: CircleAvatar(
+        backgroundImage:
+            event.imageUrls.isEmpty ? null : NetworkImage(event.imageUrls[0]),
+        backgroundColor: Colors.grey,
+      ),
+      title: Text(event.title, maxLines: 1),
+      subtitle: Text("${event.user.firstName} ${event.user.lastName}"),
+      trailing: PopupMenuButton(
+          onSelected: (value) => onSaveTap?.call(),
+          itemBuilder: (BuildContext context) {
+            return [
+              PopupMenuItem(
+                value: 'saved',
+                child: ListTile(
+                  title: Text(event.isSaved ? 'Saved' : 'Save'),
+                  leading: Icon(
+                      event.isSaved ? Icons.bookmark_outlined : Icons.bookmark_border),
                 ),
-                Text("${event.user.firstName} ${event.user.lastName}",
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
-              ],
-            ),
-          ],
-        ),
-        Icon(Icons.bookmark_border_sharp)
-      ]),
+              ),
+            ];
+          },
+          icon: Icon(Icons.more_horiz)),
     );
   }
 
@@ -89,16 +80,17 @@ class EventCard extends StatelessWidget {
         children: [
           TextButton.icon(
             onPressed: onLikeTap,
-            label: Text("69 Like"),
+            label: Text("${event.likedUsersId.length + (event.isLiked ? 1 : 0)} Like"),
             icon: Icon(event.isLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined),
           ),
           TextButton.icon(
             onPressed: onCommentTap,
-            label: Text("69 Comment"),
+            label: Text(
+                "${event.comments.length + (event.myComment.isNotEmpty ? 1 : 0)} Comment"),
             icon: Icon(Icons.comment_sharp),
           ),
           TextButton.icon(
-            onPressed: onShareTap,
+            onPressed: onSaveTap,
             label: Text("Share"),
             icon: Icon(Icons.share),
           ),

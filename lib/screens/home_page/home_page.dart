@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                     event: state.events[i],
                     onLikeTap: () => myBloc.add(HomeLikeEvent(i)),
                     onCommentTap: () => myBloc.add(HomeCommentEvent(i, "hello")),
-                    onShareTap: () => myBloc.add(HomeSavedEvent(i)),
+                    onSaveTap: () => myBloc.add(HomeSavedEvent(i)),
                   ),
                 ),
               ));
