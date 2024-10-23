@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:evika/data/models/event_interaction.dart';
+
 import 'user.dart';
 import 'package:hive/hive.dart';
 
@@ -9,42 +11,42 @@ part 'event.g.dart';
 @HiveType(typeId: 1)
 class Event {
   @HiveField(0)
-  User user;
+  String id;
   @HiveField(1)
-  String description;
+  User user;
   @HiveField(2)
-  String title;
+  String description;
   @HiveField(3)
-  List<String> imageUrls;
+  String title;
   @HiveField(4)
-  List<String> likedUsersId;
+  List<String> imageUrls;
   @HiveField(5)
-  List<String> comments;
+  List<String> likedUsersId;
   @HiveField(6)
-  List<String> eventCategory;
+  List<String> comments;
   @HiveField(7)
-  DateTime eventStartAt;
+  List<String> eventCategory;
   @HiveField(8)
-  DateTime eventEndAt;
+  DateTime eventStartAt;
   @HiveField(9)
-  bool registrationRequired;
+  DateTime eventEndAt;
   @HiveField(10)
-  List<String> keywords;
+  bool registrationRequired;
   @HiveField(11)
-  List<String> hashTags;
+  List<String> keywords;
   @HiveField(12)
-  List<String> registration;
+  List<String> hashTags;
   @HiveField(13)
+  List<String> registration;
+  @HiveField(14)
   int likes;
 
-  @HiveField(14)
   bool isLiked;
-  @HiveField(15)
   String myComment;
-  @HiveField(16)
   bool isSaved;
 
   Event({
+    required this.id,
     required this.user,
     required this.description,
     required this.title,
@@ -66,6 +68,7 @@ class Event {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      '_id': id,
       'user': user.toMap(),
       'description': description,
       'title': title,
@@ -85,6 +88,7 @@ class Event {
 
   factory Event.fromMap(Map<String, dynamic> map) {
     return Event(
+      id: map['_id'] as String,
       user: User.fromMap(map['user'] as Map<String, dynamic>),
       description: map['description'] as String,
       title: map['title'] as String,
@@ -106,4 +110,10 @@ class Event {
 
   factory Event.fromJson(String source) =>
       Event.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  void setInteractionFields(EventInteraction interaction) {
+    isLiked = interaction.isLiked;
+    myComment = interaction.myComment;
+    isSaved = interaction.isSaved;
+  }
 }

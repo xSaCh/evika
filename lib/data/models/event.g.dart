@@ -17,64 +17,58 @@ class EventAdapter extends TypeAdapter<Event> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Event(
-      user: fields[0] as User,
-      description: fields[1] as String,
-      title: fields[2] as String,
-      imageUrls: (fields[3] as List).cast<String>(),
-      likedUsersId: (fields[4] as List).cast<String>(),
-      comments: (fields[5] as List).cast<String>(),
-      eventCategory: (fields[6] as List).cast<String>(),
-      eventStartAt: fields[7] as DateTime,
-      eventEndAt: fields[8] as DateTime,
-      registrationRequired: fields[9] as bool,
-      keywords: (fields[10] as List).cast<String>(),
-      hashTags: (fields[11] as List).cast<String>(),
-      registration: (fields[12] as List).cast<String>(),
-      likes: fields[13] as int,
-      isLiked: fields[14] as bool,
-      myComment: fields[15] as String,
-      isSaved: fields[16] as bool,
+      id: fields[0] as String,
+      user: fields[1] as User,
+      description: fields[2] as String,
+      title: fields[3] as String,
+      imageUrls: (fields[4] as List).cast<String>(),
+      likedUsersId: (fields[5] as List).cast<String>(),
+      comments: (fields[6] as List).cast<String>(),
+      eventCategory: (fields[7] as List).cast<String>(),
+      eventStartAt: fields[8] as DateTime,
+      eventEndAt: fields[9] as DateTime,
+      registrationRequired: fields[10] as bool,
+      keywords: (fields[11] as List).cast<String>(),
+      hashTags: (fields[12] as List).cast<String>(),
+      registration: (fields[13] as List).cast<String>(),
+      likes: fields[14] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Event obj) {
     writer
-      ..writeByte(17)
-      ..writeByte(0)
-      ..write(obj.user)
-      ..writeByte(1)
-      ..write(obj.description)
-      ..writeByte(2)
-      ..write(obj.title)
-      ..writeByte(3)
-      ..write(obj.imageUrls)
-      ..writeByte(4)
-      ..write(obj.likedUsersId)
-      ..writeByte(5)
-      ..write(obj.comments)
-      ..writeByte(6)
-      ..write(obj.eventCategory)
-      ..writeByte(7)
-      ..write(obj.eventStartAt)
-      ..writeByte(8)
-      ..write(obj.eventEndAt)
-      ..writeByte(9)
-      ..write(obj.registrationRequired)
-      ..writeByte(10)
-      ..write(obj.keywords)
-      ..writeByte(11)
-      ..write(obj.hashTags)
-      ..writeByte(12)
-      ..write(obj.registration)
-      ..writeByte(13)
-      ..write(obj.likes)
-      ..writeByte(14)
-      ..write(obj.isLiked)
       ..writeByte(15)
-      ..write(obj.myComment)
-      ..writeByte(16)
-      ..write(obj.isSaved);
+      ..writeByte(0)
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.user)
+      ..writeByte(2)
+      ..write(obj.description)
+      ..writeByte(3)
+      ..write(obj.title)
+      ..writeByte(4)
+      ..write(obj.imageUrls)
+      ..writeByte(5)
+      ..write(obj.likedUsersId)
+      ..writeByte(6)
+      ..write(obj.comments)
+      ..writeByte(7)
+      ..write(obj.eventCategory)
+      ..writeByte(8)
+      ..write(obj.eventStartAt)
+      ..writeByte(9)
+      ..write(obj.eventEndAt)
+      ..writeByte(10)
+      ..write(obj.registrationRequired)
+      ..writeByte(11)
+      ..write(obj.keywords)
+      ..writeByte(12)
+      ..write(obj.hashTags)
+      ..writeByte(13)
+      ..write(obj.registration)
+      ..writeByte(14)
+      ..write(obj.likes);
   }
 
   @override

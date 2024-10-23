@@ -41,6 +41,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       var events = state.events;
       events[event.index].isLiked = !events[event.index].isLiked;
+
+      await repo.setEventInteraction(events[event.index]);
       emit(state.copyWith(events: events));
     } catch (e) {
       emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
@@ -51,6 +53,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       var events = state.events;
       events[event.index].myComment = event.comment;
+
+      await repo.setEventInteraction(events[event.index]);
       emit(state.copyWith(events: events));
     } catch (e) {
       emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
@@ -61,6 +65,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       var events = state.events;
       events[event.index].isSaved = !events[event.index].isSaved;
+
+      await repo.setEventInteraction(events[event.index]);
       emit(state.copyWith(events: events));
     } catch (e) {
       emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
