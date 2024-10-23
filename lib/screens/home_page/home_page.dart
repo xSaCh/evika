@@ -68,16 +68,18 @@ class _HomePageState extends State<HomePage> {
             color: Colors.white,
             child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Expanded(child: searchBar()),
-              SizedBox(width: 16),
-              IconButton(
-                onPressed: () {},
-                icon: SvgPicture.asset('assets/setting.svg',
-                    colorFilter: ColorFilter.mode(
-                      mainColor,
-                      BlendMode.srcIn,
-                    )),
-                // icon: Icon(Icons.settings_input_component_rounded,
-                //     size: 30, color: mainColor),
+              SizedBox(width: 12),
+              GestureDetector(
+                onTap: () {},
+                child: SvgPicture.asset(
+                  'assets/setting.svg',
+                  colorFilter: ColorFilter.mode(
+                    mainColor,
+                    BlendMode.srcIn,
+                  ),
+                  width: 35,
+                  height: 35,
+                ),
               )
             ]),
           ),
@@ -125,16 +127,17 @@ class _HomePageState extends State<HomePage> {
 
 Widget searchBar({TextEditingController? controller}) {
   return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+    padding: const EdgeInsets.symmetric(horizontal: 6),
     decoration: BoxDecoration(
-      color: Color(0xFFEBF2FA),
-      borderRadius: BorderRadius.circular(30),
+      color: secondaryColor,
+      borderRadius: BorderRadius.circular(20),
     ),
     child: TextField(
       style: const TextStyle(color: Colors.black, fontSize: 18),
       textAlignVertical: TextAlignVertical.center,
       controller: controller,
       decoration: InputDecoration(
+        isDense: true,
         prefixIcon: Icon(Icons.search, color: Colors.grey, size: 30),
         hintText: "Search messages",
         hintStyle: const TextStyle(color: Colors.grey, fontSize: 18),
