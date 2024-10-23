@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:evika/data/models/event.dart';
 import 'package:evika/data/models/login_user.dart';
@@ -10,33 +8,74 @@ part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Repository repo;
-  HomeBloc(this.repo) : super(HomeState.empty()) {
+  int nextPage;
+  late int totalPages;
+
+  HomeBloc(this.repo)
+      : nextPage = 1,
+        super(HomeState.empty()) {
     on<HomeInitialEvent>(_handleInitialEvent);
     on<HomeLikeEvent>(_handleLikeEvent);
     on<HomeCommentEvent>(_handleCommentEvent);
     on<HomeSavedEvent>(_handleSavedEvent);
+    on<HomeNextEvents>(_handleNextEvent);
   }
 
   void _handleInitialEvent(HomeInitialEvent event, Emitter<HomeState> emit) async {
-    final r = await repo.getEvents();
-    emit(state.copyWith(events: r));
+    try {
+      final r = await repo.getEvents();
+      nextPage++;
+      totalPages = r.$2;
+      emit(state.copyWith(events: r.$1));
+    } catch (e) {
+      emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
+    }
   }
 
   void _handleLikeEvent(HomeLikeEvent event, Emitter<HomeState> emit) async {
-    var events = state.events;
-    events[event.index].isLiked = !events[event.index].isLiked;
-    emit(state.copyWith(events: events));
+    try {
+      var events = state.events;
+      events[event.index].isLiked = !events[event.index].isLiked;
+      emit(state.copyWith(events: events));
+    } catch (e) {
+      emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
+    }
   }
 
   void _handleCommentEvent(HomeCommentEvent event, Emitter<HomeState> emit) async {
-    var events = state.events;
-    events[event.index].myComment = event.comment;
-    emit(state.copyWith(events: events));
+    try {
+      var events = state.events;
+      events[event.index].myComment = event.comment;
+      emit(state.copyWith(events: events));
+    } catch (e) {
+      emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
+    }
   }
 
   void _handleSavedEvent(HomeSavedEvent event, Emitter<HomeState> emit) async {
-    var events = state.events;
-    events[event.index].isSaved = !events[event.index].isSaved;
-    emit(state.copyWith(events: events));
+    try {
+      var events = state.events;
+      events[event.index].isSaved = !events[event.index].isSaved;
+      emit(state.copyWith(events: events));
+    } catch (e) {
+      emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
+    }
+  }
+
+  void _handleNextEvent(HomeNextEvents event, Emitter<HomeState> emit) async {
+    try {
+      if (nextPage > totalPages) {
+        emit(HomeNoMoreEventsState(events: state.events, loginUser: state.loginUser));
+        return;
+      }
+      var newEvents = await repo.getEvents(page: nextPage);
+      // Assuming Total pages might change during fetching next pages
+      totalPages = newEvents.$2;
+      nextPage++;
+
+      emit(state.copyWith(events: state.events..addAll(newEvents.$1)));
+    } catch (e) {
+      emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
+    }
   }
 }

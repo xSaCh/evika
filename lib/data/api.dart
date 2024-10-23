@@ -34,20 +34,23 @@ class Api {
     }
   }
 
-  Future<List<Event>> getEvents({int page = 1}) async {
+  Future<(List<Event>, int)> getEvents({int page = 1}) async {
     try {
       final url = Uri.parse('$baseUrl/$eventPath?page=$page');
       final response = await http.get(url);
-      if (response.statusCode != 200) return [];
+      if (response.statusCode != 200) return ([] as List<Event>, 0);
       final data = jsonDecode(response.body) as Map<String, dynamic>;
 
       if (data['message'] != "Events fetched successfully" || data['data'] == null) {
-        return [];
+        return ([] as List<Event>, 0);
       }
       final eventsMap = data['data']['events'];
-      return eventsMap.map<Event>((event) => Event.fromMap(event)).toList();
+      final totalPages = data['data']['totalPages'] as int;
+
+      List<Event> newEvents = eventsMap.map<Event>((e) => Event.fromMap(e)).toList();
+      return (newEvents, totalPages);
     } catch (e) {
-      return [];
+      return ([] as List<Event>, 0);
     }
   }
 }

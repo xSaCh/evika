@@ -15,3 +15,12 @@ class HomeState {
     );
   }
 }
+
+class HomeFailureState extends HomeState {
+  String errorMsg;
+  HomeFailureState({required super.events, required this.errorMsg, super.loginUser});
+}
+
+class HomeNoMoreEventsState extends HomeState {
+  HomeNoMoreEventsState({required super.events, super.loginUser});
+}
