@@ -9,7 +9,6 @@ import 'package:evika/data/models/event.dart';
 import 'package:evika/data/models/user.dart';
 import 'package:evika/data/repositories/local_repository.dart';
 import 'package:evika/data/repositories/repository.dart';
-import 'package:evika/screens/base_screen.dart';
 import 'package:evika/screens/login_page/login_page.dart';
 
 void main() async {
@@ -42,7 +41,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       title: 'Evika',
-      home: BaseScreen(),
+      home: LoginScreen.builder(context),
     );
   }
 }
