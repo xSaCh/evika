@@ -22,10 +22,10 @@ class SavedPage extends StatefulWidget {
   }
 }
 
-class _SavedPageState extends State<SavedPage> {
+class _SavedPageState extends State<SavedPage> with AutomaticKeepAliveClientMixin {
   final _scrollCnt = ScrollController(keepScrollOffset: true);
   bool hasNextEvents = true;
-  bool isLoading = false;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -38,6 +38,9 @@ class _SavedPageState extends State<SavedPage> {
     _scrollCnt.dispose();
     super.dispose();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   void _loadMore() {
     // Load more events when scroll to the bottom
@@ -52,6 +55,7 @@ class _SavedPageState extends State<SavedPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -77,7 +81,9 @@ class _SavedPageState extends State<SavedPage> {
               setState(() => isLoading = false);
             },
             builder: (context, state) {
-              if (state.events.isEmpty) return CircularProgressIndicator();
+              if (state.events.isEmpty) {
+                return Center(child: !isLoading ? Text("No Saved Events Found") : null);
+              }
               final myBloc = BlocProvider.of<SavedBloc>(context);
               return Expanded(
                   child: ListView.builder(

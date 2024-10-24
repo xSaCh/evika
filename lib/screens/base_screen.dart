@@ -14,18 +14,19 @@ class BaseScreen extends StatefulWidget {
 }
 
 class _BaseScreenState extends State<BaseScreen> {
-  final PageController _pageController = PageController(keepPage: true);
+  final PageController _pageController = PageController();
   late List<Widget> _pages;
   int _selectedIndex = 0;
 
   @override
   void initState() {
     _pages = [
-      HomePage.builder(context, key: PageStorageKey('homePage')),
-      LikePage.builder(context, key: PageStorageKey('likePage')),
+      HomePage.builder(context),
+      LikePage.builder(context),
       Center(child: Text("Community")),
-      SavedPage.builder(context, key: PageStorageKey('savedPage')),
+      SavedPage.builder(context),
     ];
+
     super.initState();
   }
 

@@ -21,10 +21,10 @@ class LikePage extends StatefulWidget {
   }
 }
 
-class _LikePageState extends State<LikePage> {
+class _LikePageState extends State<LikePage> with AutomaticKeepAliveClientMixin {
   final _scrollCnt = ScrollController(keepScrollOffset: true);
   bool hasNextEvents = true;
-  bool isLoading = false;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -37,6 +37,9 @@ class _LikePageState extends State<LikePage> {
     _scrollCnt.dispose();
     super.dispose();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   void _loadMore() {
     // Load more events when scroll to the bottom
@@ -51,6 +54,7 @@ class _LikePageState extends State<LikePage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -76,7 +80,9 @@ class _LikePageState extends State<LikePage> {
               setState(() => isLoading = false);
             },
             builder: (context, state) {
-              if (state.events.isEmpty) return CircularProgressIndicator();
+              if (state.events.isEmpty) {
+                return Center(child: !isLoading ? Text("No Liked Events Found") : null);
+              }
               final myBloc = BlocProvider.of<LikeBloc>(context);
               return Expanded(
                   child: ListView.builder(

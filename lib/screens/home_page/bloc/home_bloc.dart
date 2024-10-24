@@ -33,7 +33,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       // emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
       debugPrint("Cached Response");
       final events = repo.getEventsCached();
-      emit(state.copyWith(events: events));
+      emit(HomeFailureState(events: events, errorMsg: "Showing cached events"));
     }
   }
 

@@ -20,13 +20,14 @@ class HomePage extends StatefulWidget {
   }
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
   final _scrollCnt = ScrollController(keepScrollOffset: true);
   bool hasNextEvents = true;
-  bool isLoading = false;
+  bool isLoading = true;
 
   @override
   void initState() {
+    debugPrint("INIT");
     super.initState();
     _scrollCnt.addListener(_loadMore);
   }
@@ -36,6 +37,9 @@ class _HomePageState extends State<HomePage> {
     _scrollCnt.dispose();
     super.dispose();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   void _loadMore() {
     // Load more events when scroll to the bottom
@@ -50,6 +54,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -92,7 +98,9 @@ class _HomePageState extends State<HomePage> {
               setState(() => isLoading = false);
             },
             builder: (context, state) {
-              if (state.events.isEmpty) return CircularProgressIndicator();
+              if (state.events.isEmpty) {
+                return Center(child: !isLoading ? Text("No Events Found") : null);
+              }
               final myBloc = BlocProvider.of<HomeBloc>(context);
               return Expanded(
                   child: ListView.builder(
