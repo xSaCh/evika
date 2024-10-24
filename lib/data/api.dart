@@ -45,9 +45,31 @@ class Api {
         return ([] as List<Event>, 0);
       }
       final eventsMap = data['data']['events'];
-      final totalPages = data['data']['totalPages'] as int;
+      var totalPages = data['data']['totalPages'] as int;
 
       List<Event> newEvents = eventsMap.map<Event>((e) => Event.fromMap(e)).toList();
+      if (newEvents.isEmpty) totalPages = page;
+      return (newEvents, totalPages);
+    } catch (e) {
+      return ([] as List<Event>, 0);
+    }
+  }
+
+  Future<(List<Event>, int)> searchEvents(String query, {int page = 1}) async {
+    try {
+      final url = Uri.parse('$baseUrl/$eventSearchPath?q=$query&page=$page');
+      final response = await http.get(url);
+      if (response.statusCode != 200) return ([] as List<Event>, 0);
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+
+      if (data['message'] != "Events fetched successfully" || data['data'] == null) {
+        return ([] as List<Event>, 0);
+      }
+      final eventsMap = data['data']['events'];
+      var totalPages = data['data']['totalPages'] as int;
+
+      List<Event> newEvents = eventsMap.map<Event>((e) => Event.fromMap(e)).toList();
+      if (newEvents.isEmpty) totalPages = page;
       return (newEvents, totalPages);
     } catch (e) {
       return ([] as List<Event>, 0);

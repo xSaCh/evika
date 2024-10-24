@@ -1,4 +1,5 @@
 import 'package:evika/data/constants.dart';
+import 'package:evika/data/debouncer.dart';
 import 'package:evika/data/repositories/repository.dart';
 import 'package:evika/screens/home_page/bloc/home_bloc.dart';
 import 'package:evika/widgets/event_card.dart';
@@ -22,12 +23,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
   final _scrollCnt = ScrollController(keepScrollOffset: true);
+  final _searchTxtCnt = TextEditingController();
+  final debouncer = Debouncer();
+
   bool hasNextEvents = true;
   bool isLoading = true;
 
   @override
   void initState() {
-    debugPrint("INIT");
     super.initState();
     _scrollCnt.addListener(_loadMore);
   }
@@ -128,26 +131,28 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
       ),
     );
   }
-}
 
-Widget searchBar({TextEditingController? controller}) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 6),
-    decoration: BoxDecoration(
-      color: secondaryColor,
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: TextField(
-      style: const TextStyle(color: Colors.black, fontSize: 18),
-      textAlignVertical: TextAlignVertical.center,
-      controller: controller,
-      decoration: InputDecoration(
-        isDense: true,
-        prefixIcon: Icon(Icons.search, color: Colors.grey, size: 30),
-        hintText: "Search messages",
-        hintStyle: const TextStyle(color: Colors.grey, fontSize: 18),
-        border: OutlineInputBorder(borderSide: BorderSide.none),
+  Widget searchBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      decoration: BoxDecoration(
+        color: secondaryColor,
+        borderRadius: BorderRadius.circular(20),
       ),
-    ),
-  );
+      child: TextField(
+        style: const TextStyle(color: Colors.black, fontSize: 18),
+        textAlignVertical: TextAlignVertical.center,
+        controller: _searchTxtCnt,
+        decoration: InputDecoration(
+          isDense: true,
+          prefixIcon: Icon(Icons.search, color: Colors.grey, size: 30),
+          hintText: "Search messages",
+          hintStyle: const TextStyle(color: Colors.grey, fontSize: 18),
+          border: OutlineInputBorder(borderSide: BorderSide.none),
+        ),
+        onChanged: (value) => debouncer
+            .run(() => BlocProvider.of<HomeBloc>(context).add(HomeSearchEvent(value))),
+      ),
+    );
+  }
 }

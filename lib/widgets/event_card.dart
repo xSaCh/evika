@@ -20,13 +20,7 @@ class EventCard extends StatefulWidget {
 }
 
 class _EventCardState extends State<EventCard> {
-  late Event event;
   bool isDescOpen = false;
-  @override
-  void initState() {
-    event = widget.event;
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +34,7 @@ class _EventCardState extends State<EventCard> {
             onTap: () => setState(() => isDescOpen = !isDescOpen),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              child: Text(event.description,
+              child: Text(widget.event.description,
                   softWrap: true,
                   maxLines: isDescOpen ? null : 2,
                   overflow: isDescOpen ? null : TextOverflow.ellipsis),
@@ -54,6 +48,8 @@ class _EventCardState extends State<EventCard> {
   }
 
   Widget _topBar() {
+    Event event = widget.event;
+
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 8),
       leading: CircleAvatar(
@@ -82,6 +78,8 @@ class _EventCardState extends State<EventCard> {
   }
 
   Widget _imageBar() {
+    Event event = widget.event;
+
     // is event date between eventStartAt and eventEndAt
     bool isEventLive = DateTime.now().isAfter(event.eventStartAt) &&
         DateTime.now().isBefore(event.eventEndAt);
@@ -126,6 +124,8 @@ class _EventCardState extends State<EventCard> {
   }
 
   Widget _bottomBar() {
+    Event event = widget.event;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       child: Row(

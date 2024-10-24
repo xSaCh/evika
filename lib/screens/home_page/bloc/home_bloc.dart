@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:evika/data/models/event.dart';
 import 'package:evika/data/models/login_user.dart';
@@ -12,11 +14,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   int nextPage;
   int totalPages;
 
+  int nextSearchPage;
+  int totalSearchPages;
+  String searchQuery;
+  List<Event> fetchedEvents;
+
   HomeBloc(this.repo)
       : nextPage = 1,
+        nextSearchPage = 1,
         totalPages = 0,
+        totalSearchPages = 0,
+        searchQuery = "",
+        fetchedEvents = [],
         super(HomeState.empty()) {
     on<HomeInitialEvent>(_handleInitialEvent);
+    on<HomeSearchEvent>(_handleSearchEvent);
     on<HomeLikeEvent>(_handleLikeEvent);
     on<HomeCommentEvent>(_handleCommentEvent);
     on<HomeSavedEvent>(_handleSavedEvent);
@@ -28,12 +40,34 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final r = await repo.getEvents();
       nextPage++;
       totalPages = r.$2;
-      emit(state.copyWith(events: r.$1));
+      fetchedEvents = List.from(r.$1);
+      emit(state.copyWith(events: fetchedEvents));
     } catch (e) {
       // emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
       debugPrint("Cached Response");
       final events = repo.getEventsCached();
       emit(HomeFailureState(events: events, errorMsg: "Showing cached events"));
+    }
+  }
+
+  void _handleSearchEvent(HomeSearchEvent event, Emitter<HomeState> emit) async {
+    try {
+      // Sent previously fetched home events if no search query
+      nextSearchPage = 1;
+      searchQuery = event.query;
+
+      if (searchQuery.isEmpty) {
+        emit(state.copyWith(events: fetchedEvents));
+        return;
+      }
+
+      final r = await repo.searchEvents(searchQuery, page: nextSearchPage);
+      nextSearchPage++;
+      totalSearchPages = r.$2;
+      emit(state.copyWith(events: r.$1));
+    } catch (e) {
+      emit(HomeFailureState(
+          events: state.events, errorMsg: "Failed to get search results"));
     }
   }
 
@@ -76,11 +110,28 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void _handleNextEvent(HomeNextEvents event, Emitter<HomeState> emit) async {
     try {
+      // Get Next Events from search if query is not empty
+      if (searchQuery.isNotEmpty) {
+        if (nextSearchPage > totalSearchPages) {
+          emit(HomeNoMoreEventsState(events: state.events, loginUser: state.loginUser));
+          return;
+        }
+        var newEvents = await repo.searchEvents(searchQuery, page: nextSearchPage);
+        totalSearchPages = newEvents.$2;
+        nextSearchPage++;
+
+        emit(state.copyWith(events: state.events..addAll(newEvents.$1)));
+        return;
+      }
+
+      // Get Next Events
       if (nextPage > totalPages) {
         emit(HomeNoMoreEventsState(events: state.events, loginUser: state.loginUser));
         return;
       }
       var newEvents = await repo.getEvents(page: nextPage);
+      fetchedEvents.addAll(newEvents.$1);
+
       // Assuming Total pages might change during fetching next pages
       totalPages = newEvents.$2;
       nextPage++;
