@@ -220,22 +220,19 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
                   });
                 }),
                 SizedBox(height: 20),
-
-                // Reset and Apply buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton(
-                      onPressed: () => setState(() => selectedCategories.clear()),
-                      child: Text("Reset"),
-                    ),
+                        onPressed: () => setState(() => selectedCategories.clear()),
+                        child: Text("Reset")),
                     FilledButton(
                       onPressed: () {
                         bloc.add(HomeFilterEvent(selectedCategories));
                         Navigator.pop(context);
                       },
                       child: Text("Apply"),
-                    ),
+                    )
                   ],
                 ),
               ],
@@ -255,28 +252,32 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: List.generate(categories.length, (i) {
-          final isSelected = selectedCategories.contains(categories[i]);
-          return Padding(
-            padding: EdgeInsets.only(left: 8),
-            child: ChoiceChip(
-              selected: isSelected,
-              onSelected: (bool selected) => onCategoryChange?.call(i, selected),
-              label: Text(
-                categories[i],
-                style: TextStyle(color: isSelected ? Colors.white : Colors.blueGrey),
+        children: [
+          Text("  Categories: ",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          ...List.generate(categories.length, (i) {
+            final isSelected = selectedCategories.contains(categories[i]);
+            return Padding(
+              padding: EdgeInsets.only(left: 8),
+              child: ChoiceChip(
+                selected: isSelected,
+                onSelected: (bool selected) => onCategoryChange?.call(i, selected),
+                label: Text(
+                  categories[i],
+                  style: TextStyle(color: isSelected ? Colors.white : Colors.blueGrey),
+                ),
+                labelPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.blueGrey),
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                visualDensity: const VisualDensity(horizontal: 0.0, vertical: -4),
+                showCheckmark: false,
+                selectedColor: mainColor,
               ),
-              labelPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: Colors.blueGrey),
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-              ),
-              visualDensity: const VisualDensity(horizontal: 0.0, vertical: -4),
-              showCheckmark: false,
-              selectedColor: mainColor,
-            ),
-          );
-        }).toList(),
+            );
+          })
+        ],
       ),
     );
   }
