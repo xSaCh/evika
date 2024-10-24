@@ -150,8 +150,11 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
           hintStyle: const TextStyle(color: Colors.grey, fontSize: 18),
           border: OutlineInputBorder(borderSide: BorderSide.none),
         ),
-        onChanged: (value) => debouncer
-            .run(() => BlocProvider.of<HomeBloc>(context).add(HomeSearchEvent(value))),
+        onChanged: (value) => debouncer.run(() {
+          BlocProvider.of<HomeBloc>(context).add(HomeSearchEvent(value));
+          _scrollCnt.animateTo(0,
+              duration: Duration(milliseconds: 200), curve: Curves.easeIn);
+        }),
       ),
     );
   }

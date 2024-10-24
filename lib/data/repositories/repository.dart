@@ -23,63 +23,33 @@ class Repository {
   Future<(List<Event>, int)> getEvents({int page = 1}) async {
     debugPrint("Fetching $page events...");
 
-    // final eventRes = await api.getEvents(page: page);
+    final eventRes = await api.getEvents(page: page);
 
-    // // Get local stored interactions
-    // for (var e in eventRes.$1) {
-    //   final intr = localRepo.getEventInteraction(e.id);
-    //   if (intr != null) e.setInteractionFields(intr);
-    // }
-    // // Cached lastest events to local DB
-    // if (eventRes.$1.isNotEmpty) localRepo.setEvents(eventRes.$1);
-
-    // return eventRes;
-    File f = File("/home/samarth/events.json");
-    final data = jsonDecode(f.readAsStringSync()) as Map<String, dynamic>;
-    final eventsMap = data['data']['events'];
-    List<Event> newEvent =
-        await eventsMap.map<Event>((event) => Event.fromMap(event)).toList();
-
-    await Future.delayed(Duration(seconds: 2));
-    // throw UnimplementedError();
-    for (var e in newEvent) {
+    // Get local stored interactions
+    for (var e in eventRes.$1) {
       final intr = localRepo.getEventInteraction(e.id);
       if (intr != null) e.setInteractionFields(intr);
     }
-    if (newEvent.isNotEmpty) localRepo.setEvents(newEvent);
-    return (newEvent, 6);
+    // Cached lastest events to local DB
+    if (eventRes.$1.isNotEmpty) localRepo.setEvents(eventRes.$1);
+
+    return eventRes;
   }
 
   Future<(List<Event>, int)> searchEvents(String query, {int page = 1}) async {
     debugPrint("Searching $page events...");
 
-    // final eventRes = await api.searchEvents(query, page: page);
+    final eventRes = await api.searchEvents(query, page: page);
 
-    // // Get local stored interactions
-    // for (var e in eventRes.$1) {
-    //   final intr = localRepo.getEventInteraction(e.id);
-    //   if (intr != null) e.setInteractionFields(intr);
-    // }
-    // // Cached lastest events to local DB
-    // if (eventRes.$1.isNotEmpty) localRepo.setEvents(eventRes.$1);
-
-    // return eventRes;
-    File f = File("/home/samarth/events.json");
-    final data = jsonDecode(f.readAsStringSync()) as Map<String, dynamic>;
-    final eventsMap = data['data']['events'];
-    List<Event> newEvent =
-        await eventsMap.map<Event>((event) => Event.fromMap(event)).toList();
-
-    for (var e in newEvent) {
+    // Get local stored interactions
+    for (var e in eventRes.$1) {
       final intr = localRepo.getEventInteraction(e.id);
       if (intr != null) e.setInteractionFields(intr);
     }
+    // Cached lastest events to local DB
+    if (eventRes.$1.isNotEmpty) localRepo.setEvents(eventRes.$1);
 
-    newEvent = newEvent
-        .where((e) => e.title.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-
-    return (newEvent, 6);
+    return eventRes;
   }
 
   Future<void> setEventInteraction(Event event) async {
