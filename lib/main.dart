@@ -13,10 +13,6 @@ import 'package:evika/data/repositories/repository.dart';
 import 'package:evika/screens/login_page/login_page.dart';
 
 void main() async {
-  final a = Api("https://evika.onrender.com");
-  // final o = await a.loginUser("vikramnegi175@gmail.com", "123456789");
-  // final e = await a.getEvents();
-  // final e2 = await a.getEvents(page: 2);
   await Hive.initFlutter();
   Hive.registerAdapter(EventAdapter());
   Hive.registerAdapter(EventInteractionAdapter());
@@ -24,7 +20,12 @@ void main() async {
   await Hive.openBox<Event>('events');
   await Hive.openBox<EventInteraction>('eventInteractions');
 
-  final repo = Repository(a, LocalRepository());
+  final repo = Repository(Api("https://evika.onrender.com"), LocalRepository());
+  debugPrint("AA");
+  final o = await repo.loginUser("vikramnegi175@gmail.com", "123456789");
+  debugPrint("BB");
+  // final e = await a.getEvents();
+  // final e2 = await a.getEvents(page: 2);
 
   runApp(MultiRepositoryProvider(
     providers: [RepositoryProvider<Repository>(create: (context) => repo)],

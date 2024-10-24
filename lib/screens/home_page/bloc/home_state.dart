@@ -4,14 +4,32 @@ part of 'home_bloc.dart';
 class HomeState {
   List<Event> events;
   LoginUser? loginUser;
-  HomeState({required this.events, this.loginUser});
+  Set<String> uniqueCategories;
+  List<String> selectedCategories;
 
-  HomeState.empty() : events = [];
+  HomeState(
+      {required this.events,
+      this.loginUser,
+      Set<String>? uniqueCategories,
+      List<String>? selectedCategories})
+      : uniqueCategories = uniqueCategories ?? {},
+        selectedCategories = selectedCategories ?? [];
 
-  HomeState copyWith({List<Event>? events, LoginUser? loginUser}) {
+  HomeState.empty()
+      : events = [],
+        uniqueCategories = {},
+        selectedCategories = [];
+
+  HomeState copyWith(
+      {List<Event>? events,
+      LoginUser? loginUser,
+      Set<String>? uniqueCategories,
+      List<String>? selectedCategories}) {
     return HomeState(
       events: events ?? this.events,
       loginUser: loginUser ?? this.loginUser,
+      uniqueCategories: uniqueCategories ?? this.uniqueCategories,
+      selectedCategories: selectedCategories ?? this.selectedCategories,
     );
   }
 }

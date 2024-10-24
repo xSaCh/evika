@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:evika/data/models/event.dart';
 import 'package:evika/data/models/login_user.dart';
 import 'package:evika/data/repositories/repository.dart';
+import 'package:evika/data/util.dart';
 import 'package:flutter/material.dart';
 
 part 'home_event.dart';
@@ -33,6 +34,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeCommentEvent>(_handleCommentEvent);
     on<HomeSavedEvent>(_handleSavedEvent);
     on<HomeNextEvents>(_handleNextEvent);
+    on<HomeFilterEvent>(_handleFilterEvent);
   }
 
   void _handleInitialEvent(HomeInitialEvent event, Emitter<HomeState> emit) async {
@@ -41,6 +43,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       nextPage++;
       totalPages = r.$2;
       fetchedEvents = List.from(r.$1);
+
+      for (var e in r.$1) {
+        state.uniqueCategories
+            .addAll(e.eventCategory.map((e) => getCategoryNameFromId(e)));
+      }
+
       emit(state.copyWith(events: fetchedEvents));
     } catch (e) {
       // emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
@@ -64,6 +72,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final r = await repo.searchEvents(searchQuery, page: nextSearchPage);
       nextSearchPage++;
       totalSearchPages = r.$2;
+
+      for (var e in r.$1) {
+        state.uniqueCategories
+            .addAll(e.eventCategory.map((e) => getCategoryNameFromId(e)));
+      }
+
       emit(state.copyWith(events: r.$1));
     } catch (e) {
       emit(HomeFailureState(
@@ -120,6 +134,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         totalSearchPages = newEvents.$2;
         nextSearchPage++;
 
+        for (var e in newEvents.$1) {
+          state.uniqueCategories
+              .addAll(e.eventCategory.map((e) => getCategoryNameFromId(e)));
+        }
+
         emit(state.copyWith(events: state.events..addAll(newEvents.$1)));
         return;
       }
@@ -136,9 +155,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       totalPages = newEvents.$2;
       nextPage++;
 
+      for (var e in newEvents.$1) {
+        state.uniqueCategories
+            .addAll(e.eventCategory.map((e) => getCategoryNameFromId(e)));
+      }
       emit(state.copyWith(events: state.events..addAll(newEvents.$1)));
     } catch (e) {
       emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
     }
+  }
+
+  void _handleFilterEvent(HomeFilterEvent event, Emitter<HomeState> emit) {
+    emit(state.copyWith(selectedCategories: event.selectedCategories));
   }
 }

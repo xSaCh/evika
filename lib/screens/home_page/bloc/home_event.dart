@@ -27,3 +27,8 @@ class HomeSavedEvent extends HomeEvent {
   final int index;
   HomeSavedEvent(this.index);
 }
+
+class HomeFilterEvent extends HomeEvent {
+  final List<String> selectedCategories;
+  HomeFilterEvent(this.selectedCategories);
+}
