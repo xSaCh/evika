@@ -1,9 +1,10 @@
-import 'package:evika/data/constants.dart';
-import 'package:evika/data/models/event.dart';
-import 'package:evika/screens/home_page/home_page.dart';
-import 'package:evika/widgets/event_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+
+import 'package:evika/data/constants.dart';
+import 'package:evika/screens/home_page/home_page.dart';
+import 'package:evika/screens/like_page/like_page.dart';
+import 'package:evika/screens/saved_page/saved_page.dart';
 
 class BaseScreen extends StatefulWidget {
   const BaseScreen({super.key});
@@ -13,7 +14,6 @@ class BaseScreen extends StatefulWidget {
 }
 
 class _BaseScreenState extends State<BaseScreen> {
-  final PageStorageBucket _bucket = PageStorageBucket();
   final PageController _pageController = PageController(keepPage: true);
   late List<Widget> _pages;
   int _selectedIndex = 0;
@@ -22,8 +22,9 @@ class _BaseScreenState extends State<BaseScreen> {
   void initState() {
     _pages = [
       HomePage.builder(context, key: PageStorageKey('homePage')),
-      Center(child: Text("Liked")),
-      Center(child: Text("Saved ")),
+      LikePage.builder(context, key: PageStorageKey('likePage')),
+      Center(child: Text("Community")),
+      SavedPage.builder(context, key: PageStorageKey('savedPage')),
     ];
     super.initState();
   }

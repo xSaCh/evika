@@ -73,10 +73,7 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {},
                 child: SvgPicture.asset(
                   'assets/setting.svg',
-                  colorFilter: ColorFilter.mode(
-                    mainColor,
-                    BlendMode.srcIn,
-                  ),
+                  colorFilter: ColorFilter.mode(mainColor, BlendMode.srcIn),
                   width: 35,
                   height: 35,
                 ),
