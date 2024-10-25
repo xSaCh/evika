@@ -94,7 +94,7 @@ class _SavedPageState extends State<SavedPage> with AutomaticKeepAliveClientMixi
                   child: EventCard(
                     event: state.events[i],
                     onLikeTap: () => myBloc.add(SavedLikeEvent(i)),
-                    onCommentTap: () => myBloc.add(SavedCommentEvent(i, "hello")),
+                    onCommentTap: (v) => myBloc.add(SavedCommentEvent(i, v)),
                     onSaveTap: () => myBloc.add(SavedSavedEvent(i)),
                   ),
                 ),

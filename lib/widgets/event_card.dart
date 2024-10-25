@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 class EventCard extends StatefulWidget {
   final Event event;
   final VoidCallback? onLikeTap;
-  final VoidCallback? onCommentTap;
+  final void Function(String value)? onCommentTap;
   final VoidCallback? onSaveTap;
   const EventCard({
     super.key,
@@ -77,6 +77,46 @@ class _EventCardState extends State<EventCard> {
     );
   }
 
+  void _handleComment() {
+    final cnt = TextEditingController(text: widget.event.myComment);
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                        decoration: InputDecoration(hintText: "Comment"),
+                        controller: cnt),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        widget.onCommentTap?.call(cnt.text);
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(Icons.send)),
+                ],
+              ),
+              Divider(),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: widget.event.comments.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(title: Text(widget.event.comments[index]));
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _imageBar() {
     Event event = widget.event;
 
@@ -142,7 +182,8 @@ class _EventCardState extends State<EventCard> {
                     event.isLiked ? ColorFilter.mode(mainColor, BlendMode.srcIn) : null),
           ),
           TextButton.icon(
-            onPressed: widget.onCommentTap,
+            // onPressed: widget.onCommentTap,
+            onPressed: _handleComment,
             label: Text(
               "${event.comments.length + (event.myComment.isNotEmpty ? 1 : 0)} Comment",
               style: TextStyle(

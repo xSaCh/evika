@@ -54,8 +54,7 @@ class SavedBloc extends Bloc<SavedEvent, SavedState> {
   void _handleCommentEvent(SavedCommentEvent event, Emitter<SavedState> emit) async {
     try {
       var events = state.events;
-      events[event.index].myComment =
-          events[event.index].myComment.isNotEmpty ? "" : event.comment;
+      events[event.index].myComment = event.comment;
 
       await repo.setEventInteraction(events[event.index]);
       emit(state.copyWith(events: events));

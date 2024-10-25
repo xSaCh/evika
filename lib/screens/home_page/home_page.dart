@@ -152,7 +152,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
                     child: EventCard(
                       event: filteredEvents[i],
                       onLikeTap: () => myBloc.add(HomeLikeEvent(i)),
-                      onCommentTap: () => myBloc.add(HomeCommentEvent(i, "hello")),
+                      onCommentTap: (v) => myBloc.add(HomeCommentEvent(i, v)),
                       onSaveTap: () => myBloc.add(HomeSavedEvent(i)),
                     ),
                   ),

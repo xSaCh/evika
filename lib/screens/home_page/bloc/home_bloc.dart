@@ -48,7 +48,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         state.uniqueCategories
             .addAll(e.eventCategory.map((e) => getCategoryNameFromId(e)));
       }
-
+      fetchedEvents[0].eventEndAt = DateTime.now().add(Duration(days: 10));
+      fetchedEvents[0].comments = ["Hello", "world"];
       emit(state.copyWith(events: fetchedEvents));
     } catch (e) {
       // emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
@@ -100,8 +101,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   void _handleCommentEvent(HomeCommentEvent event, Emitter<HomeState> emit) async {
     try {
       var events = state.events;
-      events[event.index].myComment =
-          events[event.index].myComment.isNotEmpty ? "" : event.comment;
+      events[event.index].myComment = event.comment;
 
       await repo.setEventInteraction(events[event.index]);
       emit(state.copyWith(events: events));

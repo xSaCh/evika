@@ -54,8 +54,7 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
   void _handleCommentEvent(LikeCommentEvent event, Emitter<LikeState> emit) async {
     try {
       var events = state.events;
-      events[event.index].myComment =
-          events[event.index].myComment.isNotEmpty ? "" : event.comment;
+      events[event.index].myComment = event.comment;
 
       await repo.setEventInteraction(events[event.index]);
       emit(state.copyWith(events: events));

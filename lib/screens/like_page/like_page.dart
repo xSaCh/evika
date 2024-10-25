@@ -93,7 +93,7 @@ class _LikePageState extends State<LikePage> with AutomaticKeepAliveClientMixin 
                   child: EventCard(
                     event: state.events[i],
                     onLikeTap: () => myBloc.add(LikeLikeEvent(i)),
-                    onCommentTap: () => myBloc.add(LikeCommentEvent(i, "hello")),
+                    onCommentTap: (v) => myBloc.add(LikeCommentEvent(i, v)),
                     onSaveTap: () => myBloc.add(LikeSavedEvent(i)),
                   ),
                 ),
