@@ -1,7 +1,8 @@
-import 'package:evika/data/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:evika/data/models/event.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:evika/data/constants.dart';
+import 'package:evika/data/models/event.dart';
 
 class EventCard extends StatefulWidget {
   final Event event;
@@ -74,46 +75,6 @@ class _EventCardState extends State<EventCard> {
             ];
           },
           icon: Icon(Icons.more_horiz)),
-    );
-  }
-
-  void _handleComment() {
-    final cnt = TextEditingController(text: widget.event.myComment);
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                        decoration: InputDecoration(hintText: "Comment"),
-                        controller: cnt),
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        widget.onCommentTap?.call(cnt.text);
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(Icons.send)),
-                ],
-              ),
-              Divider(),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: widget.event.comments.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(title: Text(widget.event.comments[index]));
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 
@@ -201,6 +162,46 @@ class _EventCardState extends State<EventCard> {
           ),
         ],
       ),
+    );
+  }
+
+  void _handleComment() {
+    final cnt = TextEditingController(text: widget.event.myComment);
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                        decoration: InputDecoration(hintText: "Comment"),
+                        controller: cnt),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        widget.onCommentTap?.call(cnt.text);
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(Icons.send)),
+                ],
+              ),
+              Divider(),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: widget.event.comments.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(title: Text(widget.event.comments[index]));
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

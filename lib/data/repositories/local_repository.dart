@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:evika/data/models/event.dart';
 import 'package:evika/data/models/event_interaction.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -10,6 +13,13 @@ class LocalRepository {
   LocalRepository() {
     eventBox = Hive.box("events");
     eventInteractionBox = Hive.box("eventInteractions");
+  }
+
+  Future<void> initDB() async {
+    await eventBox.clear();
+    String eventLocalData = File('assets/events.json').readAsStringSync();
+    jsonDecode(eventLocalData)['data']['events']
+        .forEach((event) async => await eventBox.add(Event.fromMap(event)));
   }
 
   Future setToken(String token) async {

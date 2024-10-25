@@ -1,11 +1,10 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
+
 import 'package:evika/data/models/event.dart';
 import 'package:evika/data/models/login_user.dart';
 import 'package:evika/data/repositories/repository.dart';
 import 'package:evika/data/util.dart';
-import 'package:flutter/material.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
@@ -48,11 +47,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         state.uniqueCategories
             .addAll(e.eventCategory.map((e) => getCategoryNameFromId(e)));
       }
+
+      // Modifing First event for testing Live event feature
       fetchedEvents[0].eventEndAt = DateTime.now().add(Duration(days: 10));
-      fetchedEvents[0].comments = ["Hello", "world"];
+      fetchedEvents[0].comments = ["Excited !!", "Yehhhh 🔥🔥"];
+
       emit(state.copyWith(events: fetchedEvents));
     } catch (e) {
-      // emit(HomeFailureState(events: state.events, errorMsg: e.toString()));
       debugPrint("Cached Response");
       final events = repo.getEventsCached();
       emit(HomeFailureState(events: events, errorMsg: "Showing cached events"));

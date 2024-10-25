@@ -1,6 +1,5 @@
 import 'package:evika/data/constants.dart';
 import 'package:evika/data/models/event_interaction.dart';
-import 'package:evika/screens/base_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -21,7 +20,8 @@ void main() async {
   await Hive.openBox<EventInteraction>('eventInteractions');
 
   final repo = Repository(Api("https://evika.onrender.com"), LocalRepository());
-  final o = await repo.loginUser("vikramnegi175@gmail.com", "123456789");
+
+  await repo.initDB();
 
   runApp(MultiRepositoryProvider(
     providers: [RepositoryProvider<Repository>(create: (context) => repo)],
