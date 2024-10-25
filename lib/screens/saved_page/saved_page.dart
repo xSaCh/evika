@@ -75,6 +75,7 @@ class _SavedPageState extends State<SavedPage> with AutomaticKeepAliveClientMixi
         },
         child: SingleChildScrollView(
           physics: AlwaysScrollableScrollPhysics(),
+          controller: _scrollCnt,
           child: Column(
             children: [
               BlocConsumer<SavedBloc, SavedState>(
@@ -100,7 +101,6 @@ class _SavedPageState extends State<SavedPage> with AutomaticKeepAliveClientMixi
                   return ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    controller: _scrollCnt,
                     itemCount: state.events.length,
                     itemBuilder: (context, i) => Padding(
                       padding: const EdgeInsets.only(top: 8.0),

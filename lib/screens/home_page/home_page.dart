@@ -127,6 +127,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
               setState(() => isLoading = true);
             },
             child: SingleChildScrollView(
+              controller: _scrollCnt,
               physics: AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
@@ -154,7 +155,6 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
                     ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      controller: _scrollCnt,
                       itemCount: filteredEvents.length,
                       itemBuilder: (context, i) => Padding(
                         padding: const EdgeInsets.only(top: 8.0),

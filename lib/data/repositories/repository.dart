@@ -15,7 +15,9 @@ class Repository {
   Future<void> initDB() async => localRepo.initDB();
 
   Future<LoginUser?> loginUser(String email, String password) async {
+    debugPrint("Logging in...");
     final res = await api.loginUser(email, password);
+    debugPrint("Logged in as ${res.$1?.email}");
 
     if (res.$2 != "") localRepo.setToken(res.$2);
     loggedUser = res.$1;

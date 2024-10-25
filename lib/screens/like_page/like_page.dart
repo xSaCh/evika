@@ -72,6 +72,7 @@ class _LikePageState extends State<LikePage> with AutomaticKeepAliveClientMixin 
           setState(() => isLoading = true);
         },
         child: SingleChildScrollView(
+          controller: _scrollCnt,
           physics: AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
@@ -97,7 +98,6 @@ class _LikePageState extends State<LikePage> with AutomaticKeepAliveClientMixin 
                   return ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    controller: _scrollCnt,
                     itemCount: state.events.length,
                     itemBuilder: (context, i) => Padding(
                       padding: const EdgeInsets.only(top: 8.0),
