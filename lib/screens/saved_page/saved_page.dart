@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -67,47 +68,61 @@ class _SavedPageState extends State<SavedPage> with AutomaticKeepAliveClientMixi
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.notifications_sharp))],
       ),
       backgroundColor: Colors.grey,
-      body: Column(
-        children: [
-          BlocConsumer<SavedBloc, SavedState>(
-            listener: (context, state) {
-              if (state is SavedNoMoreEventsState) {
-                setState(() => hasNextEvents = false);
-              } else if (state is SavedFailureState) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.errorMsg)));
-              }
-              // Set loading to false when state changes
-              setState(() => isLoading = false);
-            },
-            builder: (context, state) {
-              if (state.events.isEmpty) {
-                return Center(child: !isLoading ? Text("No Saved Events Found") : null);
-              }
-              final myBloc = BlocProvider.of<SavedBloc>(context);
-              return Expanded(
-                  child: ListView.builder(
-                controller: _scrollCnt,
-                itemCount: state.events.length,
-                itemBuilder: (context, i) => Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: EventCard(
-                    event: state.events[i],
-                    onLikeTap: () => myBloc.add(SavedLikeEvent(i)),
-                    onCommentTap: (v) => myBloc.add(SavedCommentEvent(i, v)),
-                    onSaveTap: () => myBloc.add(SavedSavedEvent(i)),
-                  ),
-                ),
-              ));
-            },
+      body: RefreshIndicator.adaptive(
+        onRefresh: () async {
+          BlocProvider.of<SavedBloc>(context).add(SavedInitialEvent());
+          setState(() => isLoading = true);
+        },
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              BlocConsumer<SavedBloc, SavedState>(
+                listener: (context, state) {
+                  if (state is SavedNoMoreEventsState) {
+                    setState(() => hasNextEvents = false);
+                  } else if (state is SavedFailureState) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(state.errorMsg)));
+                  }
+                  // Set loading to false when state changes
+                  setState(() => isLoading = false);
+                },
+                builder: (context, state) {
+                  if (!isLoading && state.events.isEmpty) {
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height,
+                      child: Center(
+                          child: !isLoading ? Text("No Saved Events Found") : null),
+                    );
+                  }
+                  final myBloc = BlocProvider.of<SavedBloc>(context);
+                  return ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    controller: _scrollCnt,
+                    itemCount: state.events.length,
+                    itemBuilder: (context, i) => Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: EventCard(
+                        event: state.events[i],
+                        onLikeTap: () => myBloc.add(SavedLikeEvent(i)),
+                        onCommentTap: (v) => myBloc.add(SavedCommentEvent(i, v)),
+                        onSaveTap: () => myBloc.add(SavedSavedEvent(i)),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              if (isLoading)
+                Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    color: Colors.white,
+                    width: double.infinity,
+                    child: Center(child: const CircularProgressIndicator())),
+            ],
           ),
-          if (isLoading)
-            Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                color: Colors.white,
-                width: double.infinity,
-                child: Center(child: const CircularProgressIndicator())),
-        ],
+        ),
       ),
     );
   }

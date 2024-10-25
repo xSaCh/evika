@@ -121,49 +121,60 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
                     selectedCategories))
                 .toList();
           }
-          return Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                color: Colors.white,
-                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Expanded(child: searchBar()),
-                  SizedBox(width: 12),
-                  GestureDetector(
-                    onTap: () => buildFilter(state.uniqueCategories),
-                    child: SvgPicture.asset(
-                      'assets/setting.svg',
-                      colorFilter: ColorFilter.mode(mainColor, BlendMode.srcIn),
-                      width: 35,
-                      height: 35,
-                    ),
-                  )
-                ]),
-              ),
-              if (!isLoading && state.events.isEmpty)
-                Center(child: Text("No Events Found"))
-              else
-                Expanded(
-                    child: ListView.builder(
-                  controller: _scrollCnt,
-                  itemCount: filteredEvents.length,
-                  itemBuilder: (context, i) => Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: EventCard(
-                      event: filteredEvents[i],
-                      onLikeTap: () => myBloc.add(HomeLikeEvent(i)),
-                      onCommentTap: (v) => myBloc.add(HomeCommentEvent(i, v)),
-                      onSaveTap: () => myBloc.add(HomeSavedEvent(i)),
-                    ),
-                  ),
-                )),
-              if (isLoading)
-                Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+          return RefreshIndicator(
+            onRefresh: () async {
+              BlocProvider.of<HomeBloc>(context).add(HomeInitialEvent());
+              setState(() => isLoading = true);
+            },
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     color: Colors.white,
-                    width: double.infinity,
-                    child: Center(child: const CircularProgressIndicator())),
-            ],
+                    child:
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Expanded(child: searchBar()),
+                      SizedBox(width: 12),
+                      GestureDetector(
+                        onTap: () => buildFilter(state.uniqueCategories),
+                        child: SvgPicture.asset(
+                          'assets/setting.svg',
+                          colorFilter: ColorFilter.mode(mainColor, BlendMode.srcIn),
+                          width: 35,
+                          height: 35,
+                        ),
+                      )
+                    ]),
+                  ),
+                  if (!isLoading && state.events.isEmpty)
+                    Center(child: Text("No Events Found"))
+                  else
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      controller: _scrollCnt,
+                      itemCount: filteredEvents.length,
+                      itemBuilder: (context, i) => Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: EventCard(
+                          event: filteredEvents[i],
+                          onLikeTap: () => myBloc.add(HomeLikeEvent(i)),
+                          onCommentTap: (v) => myBloc.add(HomeCommentEvent(i, v)),
+                          onSaveTap: () => myBloc.add(HomeSavedEvent(i)),
+                        ),
+                      ),
+                    ),
+                  if (isLoading)
+                    Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        color: Colors.white,
+                        width: double.infinity,
+                        child: Center(child: const CircularProgressIndicator())),
+                ],
+              ),
+            ),
           );
         }));
   }

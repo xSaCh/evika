@@ -66,47 +66,60 @@ class _LikePageState extends State<LikePage> with AutomaticKeepAliveClientMixin 
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.notifications_sharp))],
       ),
       backgroundColor: Colors.grey,
-      body: Column(
-        children: [
-          BlocConsumer<LikeBloc, LikeState>(
-            listener: (context, state) {
-              if (state is LikeNoMoreEventsState) {
-                setState(() => hasNextEvents = false);
-              } else if (state is LikeFailureState) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.errorMsg)));
-              }
-              // Set loading to false when state changes
-              setState(() => isLoading = false);
-            },
-            builder: (context, state) {
-              if (state.events.isEmpty) {
-                return Center(child: !isLoading ? Text("No Liked Events Found") : null);
-              }
-              final myBloc = BlocProvider.of<LikeBloc>(context);
-              return Expanded(
-                  child: ListView.builder(
-                controller: _scrollCnt,
-                itemCount: state.events.length,
-                itemBuilder: (context, i) => Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: EventCard(
-                    event: state.events[i],
-                    onLikeTap: () => myBloc.add(LikeLikeEvent(i)),
-                    onCommentTap: (v) => myBloc.add(LikeCommentEvent(i, v)),
-                    onSaveTap: () => myBloc.add(LikeSavedEvent(i)),
-                  ),
-                ),
-              ));
-            },
+      body: RefreshIndicator(
+        onRefresh: () async {
+          BlocProvider.of<LikeBloc>(context).add(LikeInitialEvent());
+          setState(() => isLoading = true);
+        },
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              BlocConsumer<LikeBloc, LikeState>(
+                listener: (context, state) {
+                  if (state is LikeNoMoreEventsState) {
+                    setState(() => hasNextEvents = false);
+                  } else if (state is LikeFailureState) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(state.errorMsg)));
+                  }
+                  // Set loading to false when state changes
+                  setState(() => isLoading = false);
+                },
+                builder: (context, state) {
+                  if (!isLoading && state.events.isEmpty) {
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height,
+                      child: Center(child: Text("No Liked Events Found")),
+                    );
+                  }
+                  final myBloc = BlocProvider.of<LikeBloc>(context);
+                  return ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    controller: _scrollCnt,
+                    itemCount: state.events.length,
+                    itemBuilder: (context, i) => Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: EventCard(
+                        event: state.events[i],
+                        onLikeTap: () => myBloc.add(LikeLikeEvent(i)),
+                        onCommentTap: (v) => myBloc.add(LikeCommentEvent(i, v)),
+                        onSaveTap: () => myBloc.add(LikeSavedEvent(i)),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              if (isLoading)
+                Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    color: Colors.white,
+                    width: double.infinity,
+                    child: Center(child: const CircularProgressIndicator())),
+            ],
           ),
-          if (isLoading)
-            Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                color: Colors.white,
-                width: double.infinity,
-                child: Center(child: const CircularProgressIndicator())),
-        ],
+        ),
       ),
     );
   }
